@@ -109,35 +109,35 @@ class PopupManager():
 
         log.debug('Displaying signature popup')
 
-        arg_region = self.current_view.get_regions('argSpan')[0]
-        location = arg_region.begin()  # Default to start of arg list
+        # arg_region = self.current_view.get_regions('argSpan')[0]
+        # location = arg_region.begin()  # Default to start of arg list
 
         # If the cursor is not in the first line of the arg list, set the popup
         # location to first non-whitespace, or EOL, of the current line
-        cursor_point = self.current_view.sel()[0].begin()
-        opening_line = self.current_view.line(arg_region.begin())
-        if(not opening_line.contains(cursor_point)):
-            cursor_line_start = self.current_view.line(cursor_point).begin()
-            location = self.current_view.find(
-                r'\s*?(?=[\S\n\r]|$)',
-                cursor_line_start
-            ).end()
+        # cursor_point = self.current_view.sel()[0].begin()
+        # opening_line = self.current_view.line(arg_region.begin())
+        # if(not opening_line.contains(cursor_point)):
+        #     cursor_line_start = self.current_view.line(cursor_point).begin()
+        #     location = self.current_view.find(
+        #         r'\s*?(?=[\S\n\r]|$)',
+        #         cursor_line_start
+        #     ).end()
 
         # If the popup is currently visible and at the right location, then
         # call 'update' instead of 'show', else this can get in a loop when show
         # causes the old popup to be hidden (and on_hidden is called), as well
         # as causing some unnecessary UI flickering.
-        if self.current_view.is_popup_visible() and self.current_location == location:
-            self.current_view.update_popup(popup_text)
-        else:
-            self.current_location = location
-            self.current_view.show_popup(
-                popup_text,
-                sublime.COOPERATE_WITH_AUTO_COMPLETE,
-                on_navigate=self.on_navigate,
-                on_hide=self.on_hidden,
-                location=location,
-                max_width=800)
+        # if self.current_view.is_popup_visible() and self.current_location == location:
+        #     self.current_view.update_popup(popup_text)
+        # else:
+            # self.current_location = location
+        self.current_view.show_popup(
+            popup_text,
+            sublime.COOPERATE_WITH_AUTO_COMPLETE,
+            on_navigate=self.on_navigate,
+            # on_hide=self.on_hidden,
+            # location=location,
+            max_width=800)
 
     def move_next(self):
         if not self.signature_help:
