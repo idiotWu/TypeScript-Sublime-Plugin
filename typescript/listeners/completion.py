@@ -100,7 +100,8 @@ class CompletionEventListener:
                         self.if_completion_request_member = (prev_char == ".")
                     else:
                         self.if_completion_request_member = False
-                    cli.service.async_completions(view.file_name(), location, prefix, self.handle_completion_info)
+                    # cli.service.async_completions(view.file_name(), location, prefix, self.handle_completion_info)
+                    cli.service.completions(view.file_name(), location, prefix, self.handle_completion_info)
 
             completions = self.pending_completions
             info.last_completion_loc = locations[0]
@@ -141,8 +142,8 @@ class CompletionEventListener:
                 self.pending_completions = completions
             if not IS_ST2:
                 self.completions_ready = True
-                active_view().run_command('hide_auto_complete')
-                self.run_auto_complete()
+                # active_view().run_command('hide_auto_complete')
+                # self.run_auto_complete()
 
     def run_auto_complete(self):
         active_view().run_command("auto_complete", {
