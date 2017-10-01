@@ -1,13 +1,38 @@
 <style>
+html {
+    background-color: #2e3440;
+    font-weight: normal;
+}
 body {
+    color: #aaa;
+    margin: 0;
+    padding: 0 10px;
     font-size: ${fontSize}px;
 }
-div {
-    margin: 5px;
-    word-wrap:break-word;
+.name {
+    color: #94c54d;
+}
+.param {
+    color: #f0ab40;
+}
+.type {
+    color: #60c3e0;
+}
+.current {
+    font-weight: bold;
+    text-decoration: underline;
+}
+.desc, .active {
+    font-style: italic;
+}
+p {
+    margin: 10px 0;
+}
+a {
+    color: #6699cc;
 }
 </style>
-<div><b>${signature}</b></div>
-<div style="margin-left: 15px">${description}</div>
-<div>${activeParam}</div>
-<div><a href="${link}">${index}</a></div>
+<p>${signature}</p>
+<p class="desc">${description}</p>
+<p class="active">${activeParam}</p>
+<p><a href="${link}">${index}</a></p>
