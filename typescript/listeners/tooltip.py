@@ -15,15 +15,14 @@ class TooltipEventListener:
             # Always reset this flag
             _paren_pressed = self.was_paren_pressed
             self.was_paren_pressed = False
-            popup_manager.queue_signature_popup(view)
 
-            # if popup_manager.is_active():
-            #     popup_manager.queue_signature_popup(view)
-            # else:
-            #     if _paren_pressed:
-            #         # TODO: Check 'typescript_auto_popup' setting is True
-            #         logger.log.debug('Triggering popup of sig help on paren')
-            #         popup_manager.queue_signature_popup(view)
+            if popup_manager.is_active():
+                popup_manager.queue_signature_popup(view)
+            else:
+                if _paren_pressed:
+                    # TODO: Check 'typescript_auto_popup' setting is True
+                    logger.log.debug('Triggering popup of sig help on paren')
+                    popup_manager.queue_signature_popup(view)
 
     def on_selection_modified_with_info(self, view, info):
         # hide the doc info output panel if it's up
