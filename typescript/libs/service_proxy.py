@@ -38,17 +38,15 @@ class ServiceProxy:
         if self.__worker_comm.started():
             self.__worker_comm.postCmd(json_str)
 
-        self.set_compiler_options()
+        self.set_inferred_project_compiler_options()
 
-    def set_compiler_options(self):
+    def set_inferred_project_compiler_options(self):
         """ Add full type support for compilers running in file scope mode """
         compiler_options = {
-            "target": "ESNext",
-            "module": "CommonJS",
-            "allowSyntheticDefaultImports": True,
-            "allowNonTsExtensions": True,
-            "allowJs": True,
-            "jsx": "Preserve"
+            "target": "ESNext", # enable all es-next features
+            "allowJs": True,    # enable javascript support
+            "jsx": "Preserve",  # enable jsx support
+            "noEmit": True      # do not emit outputs
         }
         args = { "options": compiler_options }
         req_dict = self.create_req_dict("compilerOptionsForInferredProjects", args)
@@ -142,6 +140,22 @@ class ServiceProxy:
             self.__worker_comm.sendCmdSync(json_str, req_dict["seq"])
         return response_dict
 
+    def organize_imports(self, path):
+        args = {
+            "scope": {
+                "type": "file",
+                "args": {
+                    "file": path
+                }
+            },
+        }
+        req_dict = self.create_req_dict("organizeImports", args)
+        json_str = json_helpers.encode(req_dict)
+        response_dict = self.__comm.sendCmdSync(json_str, req_dict["seq"])
+        if self.__worker_comm.started():
+            self.__worker_comm.sendCmdSync(json_str, req_dict["seq"])
+        return response_dict
+
     def open(self, path):
         args = {"file": path}
         req_dict = self.create_req_dict("open", args)
@@ -212,6 +226,35 @@ class ServiceProxy:
         if self.__worker_comm.started():
             self.__worker_comm.sendCmdSync(json_str, req_dict["seq"])
         return response_dict
+
+    def get_applicable_refactors_async(self, path, start_loc, end_loc, on_completed):
+        args = {
+            "file": path,
+            "startLine": start_loc.line,
+            "startOffset": start_loc.offset,
+            "endLine": end_loc.line,
+            "endOffset": end_loc.offset,
+        }
+        req_dict = self.create_req_dict("getApplicableRefactors", args)
+        json_str = json_helpers.encode(req_dict)
+        self.__comm.sendCmdAsync(json_str, on_completed, req_dict["seq"])
+
+    def get_edits_for_refactor_async(self, path, refactor_name, action_name, start_loc, end_loc, on_completed):
+        args = {
+            "file": path,
+            "startLine": start_loc.line,
+            "startOffset": start_loc.offset,
+            "endLine": end_loc.line,
+            "endOffset": end_loc.offset,
+            "refactor": refactor_name,
+            "action": action_name,
+        }
+        req_dict = self.create_req_dict("getEditsForRefactor", args)
+        json_str = json_helpers.encode(req_dict)
+        response_dict = self.__comm.sendCmdAsync(json_str, on_completed, req_dict["seq"])
+        #on_completed(response_dict)
+        #return response_dict
+
 
     def request_get_err(self, delay=0, pathList=[]):
         args = {"files": pathList, "delay": delay}
